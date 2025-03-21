@@ -7,6 +7,9 @@ using System.ComponentModel;
 
 using Dependencies.ClrPh;
 
+using Teradyne.Utilities.VersionInfo;
+using File = System.IO.File;
+
 [Flags]
 public enum PeTypes
 {
@@ -194,11 +197,102 @@ namespace Dependencies
                 DllCharacteristics = Pe.Properties.DllCharacteristics,
             };
 
+            _versionInfo = GetExecutableFileVersionInfo(_Filepath, false);
+
             AddNewEventHandler("FullPath", "FullPath", "ModuleName", this.GetPathDisplayName);
         }
         #endregion // Constructors 
 
+        private VersionInfo GetExecutableFileVersionInfo(string filePath, bool isAssembly)
+        {
+            VersionInfo versionInfo = new VersionInfo();
+            System.Diagnostics.FileVersionInfo fileVersionInfo =
+                System.Diagnostics.FileVersionInfo.GetVersionInfo(filePath);
 
+            versionInfo.CompanyName = fileVersionInfo.CompanyName;
+            versionInfo.FileBuildPart = fileVersionInfo.FileBuildPart;
+            if (isAssembly)
+            {
+                versionInfo.FileDescription = fileVersionInfo.Comments;
+
+                if (!string.IsNullOrEmpty(fileVersionInfo.FileDescription) &&
+                    fileVersionInfo.OriginalFilename.StartsWith(fileVersionInfo.FileDescription))
+                    versionInfo.FileDescription = fileVersionInfo.Comments;
+                else
+                    versionInfo.FileDescription = fileVersionInfo.FileDescription;
+
+                if (string.IsNullOrEmpty(versionInfo.FileDescription) ||
+                    ((versionInfo.FileDescription != null) && (versionInfo.FileDescription == " ")))
+                    versionInfo.FileDescription = fileVersionInfo.FileDescription;
+            }
+            else
+            {
+                versionInfo.FileDescription = fileVersionInfo.FileDescription;
+            }
+            versionInfo.FileMajorPart = fileVersionInfo.FileMajorPart;
+            versionInfo.FileMinorPart = fileVersionInfo.FileMinorPart;
+            versionInfo.FilePrivatePart = fileVersionInfo.FilePrivatePart;
+            versionInfo.FileTitle = fileVersionInfo.FileDescription;
+            versionInfo.FileVersion = fileVersionInfo.FileVersion;
+            versionInfo.InternalName = fileVersionInfo.InternalName;
+            versionInfo.IsDebug = fileVersionInfo.IsDebug;
+            versionInfo.IsPatched = fileVersionInfo.IsPatched;
+            versionInfo.IsPreRelease = fileVersionInfo.IsPreRelease;
+            versionInfo.IsPrivateBuild = fileVersionInfo.IsPrivateBuild;
+            versionInfo.IsSpecialBuild = fileVersionInfo.IsSpecialBuild;
+            versionInfo.Language = fileVersionInfo.Language;
+            versionInfo.LegalCopyright = fileVersionInfo.LegalCopyright;
+            versionInfo.LegalTrademarks = fileVersionInfo.LegalTrademarks;
+            versionInfo.OriginalFilename = fileVersionInfo.OriginalFilename;
+            versionInfo.PrivateBuild = fileVersionInfo.PrivateBuild;
+            versionInfo.ProductBuildPart = fileVersionInfo.ProductBuildPart;
+            versionInfo.ProductMajorPart = fileVersionInfo.ProductMajorPart;
+            versionInfo.ProductMinorPart = fileVersionInfo.ProductMinorPart;
+            versionInfo.ProductName = fileVersionInfo.ProductName;
+            versionInfo.ProductPrivatePart = fileVersionInfo.ProductPrivatePart;
+            versionInfo.ProductVersion = fileVersionInfo.ProductVersion;
+            versionInfo.SpecialBuild = fileVersionInfo.SpecialBuild;
+
+            try
+            {
+                PeHeaderReader peHeaderReader = new PeHeaderReader(filePath);
+                versionInfo.ProcessorArchitecture = peHeaderReader.Machine.ToString();
+            }
+            catch (Exception)
+            {
+                versionInfo.ProcessorArchitecture = PeHeaderReader.MachineType.Unknown.ToString();
+            }
+
+            try
+            {
+                versionInfo.IsSigned = Security.WinTrust.WinTrust.VerifyEmbeddedSignature(filePath);
+            }
+            catch (Exception)
+            {
+                versionInfo.IsSigned = false;
+            }
+
+            return versionInfo;
+        }
+
+        public virtual string FileVersion
+        {
+	        get { return _versionInfo?.FileVersion; }
+        }
+        public virtual string ProductVersion
+        {
+	        get { return _versionInfo?.ProductVersion; }
+        }
+
+        public virtual string Description
+        {
+	        get { return _versionInfo?.FileDescription; }
+        }
+
+        public virtual string IsSigned
+        {
+            get { return _versionInfo?.IsSigned.ToString(); }
+        }
 
         #region PublicAPI
         public virtual string ModuleName
@@ -486,6 +580,7 @@ namespace Dependencies
         private List<PeImportDll> _Imports;
         private List<PeExport> _Exports;
 		private bool _ErrorImport;
+		private Teradyne.Utilities.VersionInfo.VersionInfo _versionInfo;
 
 
         private RelayCommand _OpenPeviewerCommand;

@@ -83,6 +83,10 @@
                 </GridViewColumn.CellTemplate>
             </GridViewColumn>
             <GridViewColumn Header="Module" Width="300" DisplayMemberBinding="{Binding ModuleName, TargetNullValue='N/A'}" util:GridViewSort.PropertyName="ModuleName" HeaderContainerStyle="{StaticResource LeftAlignHeader}"/>
+            <GridViewColumn Header="Description" Width="300" DisplayMemberBinding="{Binding Description, TargetNullValue='N/A'}" util:GridViewSort.PropertyName="Description" HeaderContainerStyle="{StaticResource LeftAlignHeader}"/>
+            <GridViewColumn Header="File Version" Width="100" DisplayMemberBinding="{Binding FileVersion, TargetNullValue='N/A'}" util:GridViewSort.PropertyName="FileVersion" HeaderContainerStyle="{StaticResource LeftAlignHeader}"/>
+            <GridViewColumn Header="Product Version" Width="100" DisplayMemberBinding="{Binding ProductVersion, TargetNullValue='N/A'}" util:GridViewSort.PropertyName="ProductVersion" HeaderContainerStyle="{StaticResource LeftAlignHeader}"/>
+            <GridViewColumn Header="Signed"  Width="60" DisplayMemberBinding="{Binding IsSigned, TargetNullValue='N/A'}" util:GridViewSort.PropertyName="IsSigned" HeaderContainerStyle="{StaticResource LeftAlignHeader}"/>
             <GridViewColumn Header="Machine"  Width="60" DisplayMemberBinding="{Binding Cpu, TargetNullValue='N/A'}" util:GridViewSort.PropertyName="Cpu" HeaderContainerStyle="{StaticResource LeftAlignHeader}"/>
             <GridViewColumn Header="Type" Width="150" DisplayMemberBinding="{Binding Type, TargetNullValue='N/A'}" util:GridViewSort.PropertyName="Type" HeaderContainerStyle="{StaticResource LeftAlignHeader}"/>
             <GridViewColumn Header="File Size" Width="100" DisplayMemberBinding="{Binding Filesize, TargetNullValue='N/A', StringFormat={}0x{0:x08}}" util:GridViewSort.PropertyName="FileSize" HeaderContainerStyle="{StaticResource LeftAlignHeader}"/>

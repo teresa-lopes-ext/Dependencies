@@ -112,6 +112,9 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="Teradyne.Utilities.VersionInfo">
+      <HintPath>C:\Program Files (x86)\Teradyne\Shared\FileInfo\Teradyne.Utilities.VersionInfo.dll</HintPath>
+    </Reference>
     <Reference Include="UIAutomationProvider" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
